@@ -109,42 +109,11 @@
         <!-- Spinner End -->
 
         <!-- Header Start -->
-        <div class="container bg-dark px-0">
-            <div class="row gx-0">
-                <div class="col-lg-3 bg-dark d-none d-lg-block">
-                    <a href="index.html"
-                        class="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
-                        <img src="https://res.cloudinary.com/dxujeg5en/image/upload/v1694517858/DSA_Logo_New_udtixz.png"
-                            class="image-logo" alt="Logo">
-                    </a>
-                </div>
-                <div class="col-lg-9">
-                    <nav class="navbar navbar-expand-lg bg-dark navbar-dark p-3 p-lg-0">
-                        <a href="index.html" class="navbar-brand d-block d-lg-none">
-                            <img src="https://res.cloudinary.com/dxujeg5en/image/upload/v1694517858/DSA_Logo_New_udtixz.png"
-                                class="image-logo" alt="Logo">
-                        </a>
-                        <button type="button" class="navbar-toggler" data-bs-toggle="collapse"
-                            data-bs-target="#navbarCollapse">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                            <div class="navbar-nav mr-auto py-0">
-                                <a href="index.html" class="nav-item nav-link active">Home</a>
-                                <a href="index.html" class="nav-item nav-link">About</a>
-                                <a href="index.html" class="nav-item nav-link">Games</a>
-                                <a href="index.html" class="nav-item nav-link">Booking</a>
-                                <a href="index.html" class="nav-item nav-link">Login</a>
-                                <a href="index.html" class="nav-item nav-link">Register</a>
-
-                            </div>
-
-                        </div>
-                </div>
-                </nav>
-            </div>
-        </div>
-    </div>
+        <% if (user) { %>
+            <%- include('navbarlogout.ejs') %>
+          <% } else { %>
+            <%- include('navbar.ejs') %>
+          <% } %>
     <!-- Header End -->
  
     <section class="container-fluid px-5">
@@ -208,75 +177,7 @@
 
 
     <!-- Footer Start -->
-    <div class="footer container-fluid bg-dark text-light footer wow fadeIn" data-wow-delay="0.1s">
-        <div class="container pb-5">
-            <div class="row g-5">
-                <div class="col-md-6 col-lg-3">
-                    <div class="rounded p-2">
-                        <a href="index.html">
-                            <img src="https://res.cloudinary.com/dxujeg5en/image/upload/v1694517858/DSA_Logo_New_udtixz.png"
-                                class="image-footer" alt="Logo">
-
-                        </a>
-
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <h6 class="section-title text-start text-primary text-uppercase mb-4">Contact</h6>
-                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, GN, India</p>
-                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+91 999999999</p>
-                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
-                    <div class="d-flex pt-2">
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-5 col-md-12">
-                    <div class="row gy-5 g-4">
-                        <div class="col-md-6">
-                            <h6 class="section-title text-start text-primary text-uppercase mb-4">Company</h6>
-                            <a class="btn btn-link" href="">About Us</a>
-                            <a class="btn btn-link" href="">Contact Us</a>
-                            <a class="btn btn-link" href="Terms.html">Terms & Condition</a>
-                            <a class="btn btn-link" href="">Support</a>
-                            <a class="btn btn-link" href="Refunds.html">Refunds</a>
-
-                        </div>
-                        <div class="col-md-6">
-                            <h6 class="section-title text-start text-primary text-uppercase mb-4">Services</h6>
-                            <a class="btn btn-link" href="">Cricket</a>
-                            <a class="btn btn-link" href="">Table Tennis</a>
-                            <a class="btn btn-link" href="">Sports & Gaming</a>
-                            <a class="btn btn-link" href="">Mario Sports</a>
-                            <a class="btn btn-link" href="">GYM & Yoga</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="copyright">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        &copy; <a class="border-bottom" href="#">DSA SPORT</a>, All Right Reserved.
-
-
-                        Designed By <a class="border-bottom" href="">Codegnan</a>
-                    </div>
-                    <div class="col-md-6 text-center text-md-end">
-                        <div class="footer-menu">
-                            <a href="">Home</a>
-                            <a href="">Cookies</a>
-                            <a href="">Help</a>
-                            <a href="">FQAs</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <%- include('footer.ejs') %>
     <!-- Footer End -->
 
 
@@ -385,8 +286,91 @@
                 }
             }
         }
+
+        var cartItems = []; // Store booking details in an array
+
+        document.getElementById("booking-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            // Retrieve values from form
+            var selectedItems = document.getElementById("timeslot").selectedOptions;
+            var items = Array.from(selectedItems).map(option => option.value);
+
+            var date = document.getElementById("date").value;
+
+            // Create a new cart item object for each selected item
+            for (var i = 0; i < items.length; i++) {
+                var option_value = items[i].split("|");
+                var newItem = {
+                    start_time: option_value[0],
+                    end_time: option_value[1],
+                    price: option_value[2],
+                    date: date
+                };
+
+                // Add the item to the cart
+                cartItems.push(newItem);
+            }
+
+            updateCartDisplay();
+
+            // Clear the form
+            document.getElementById("booking-form").reset();
+        });
+
+        function updateCartDisplay() {
+            var cartItemsDiv = document.getElementById("cart-items");
+            cartItemsDiv.innerHTML = ""; // Clear previous items
+        
+            if (cartItems.length == 0) {
+                cartItemsDiv.innerHTML = "Cart is empty.";
+            } else {
+                // Display each item in the cart
+                for (var i = 0; i < cartItems.length; i++) {
+                    var cartItem = cartItems[i];
+                    var cartItemDiv = document.createElement("div");
+                    cartItemDiv.innerHTML = `
+                        <div class="cart-item">
+                            <h3>Booking Details<button id=new onclick="removeItem(${i})">Remove</button></h3>
+                            <p>Time : ${cartItem.start_time} to ${cartItem.end_time}</p>
+                            <p>Price: ${cartItem.price}</p>
+                            <p>Date: ${cartItem.date}</p>
+                            <button id=new onclick="submitCartItem(${i})">Submit</button>
+                        </div>
+                    `;
+                    cartItemsDiv.appendChild(cartItemDiv);
+                }
+            }
+        }
+        
+
+        function removeItem(index) {
+            // Remove the item from the cart
+            cartItems.splice(index, 1);
+            updateCartDisplay();
+        }
+
+// Initial cart display
+// updateCartDisplay();
+
+// submit cart item storage
+
+function submitCartItem(index) {
+    var itemToSubmit = cartItems[index];
+    console.log("Submitting the following item to the console:");
+    console.log(itemToSubmit);
+
+    // You can optionally send this data to a server or perform other actions here
+
+    // Optionally mark the item as submitted (you can add a property to the item)
+    itemToSubmit.submitted = true;
+
+    // Update the cart display to reflect the change (e.g., add a submitted flag)
+    updateCartDisplay();
+}
+
     </script>
-    <script src="script.js"></script>
+    <script src="./script.js"></script>
 
     <script>
         
