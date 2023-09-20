@@ -191,16 +191,65 @@
                                    <!-- Add this section inside your form -->
 <div class="d-flex flex-row align-items-center mb-4">
     <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-    <div class="form-outline flex-fill mb-0">
-        <input type="email" id="formE" class="form-control" />
-        <label class="form-label" for="form3Example3c">Email OTP </label>
-        <button type="button" class="btn btn-primary ms-3" onclick="sendOTP()">Send OTP</button>
-    </div>
+    <form action="/validate-otp" method="post" class="form-outline flex-fill mb-0">
+        <input type="text" id="otpInput" name="otp" placeholder="Enter OTP" class="form-control" />
+        <input type="hidden" id="emailInput" name="email" value="" />
+        <input type="hidden" id="generatedOTPInput" name="generatedOTP" value="" />
+      
+        <button type="button" class="btn btn-primary ms-3" id="validateOTPButton">Validate OTP</button>
+      </form>
+      
+    
    
 </div>
 
 <!-- JavaScript for sending OTP via AJAX -->
 <script>
+
+document.addEventListener('DOMContentLoaded', () => {
+  const otpInput = document.getElementById('otpInput');
+  const emailInput = document.getElementById('emailInput');
+  const generatedOTPInput = document.getElementById('generatedOTPInput');
+  const validateOTPButton = document.getElementById('validateOTPButton');
+
+  // Event listener for the "Validate OTP" button click
+  validateOTPButton.addEventListener('click', () => {
+    const enteredOTP = otpInput.value;
+    const email = emailInput.value;
+    const generatedOTP = generatedOTPInput.value;
+
+    if (enteredOTP === generatedOTP) {
+      alert('OTP is valid!');
+      // You can redirect the user to a success page or perform other actions here
+    } else {
+      alert('Invalid OTP. Please try again.');
+    }
+  });
+
+  // Event listener for the "Send OTP" button click
+  document.getElementById('sendOTPButton').addEventListener('click', async () => {
+    try {
+      const response = await fetch('/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        generatedOTPInput.value = data.generatedOTP;
+        alert('OTP sent successfully!');
+      } else {
+        alert('Failed to send OTP. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  });
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.querySelector('form');
 

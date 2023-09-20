@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const connect = mongoose.connect("mongodb+srv://raghuveermustimalla:12112002@raghu.mcmvy9z.mongodb.net/dsaproject?retryWrites=true&w=majority");
+const connect = mongoose.connect("mongodb+srv://sivaram:sivaram@cluster0.0u7y0h0.mongodb.net/DSA?retryWrites=true&w=majority");
 
 // Check database connected or not
 connect.then(() => {

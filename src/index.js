@@ -6,11 +6,14 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const flash = require('connect-flash');
+const nodemailer = require('nodemailer');
+const ejs = require('ejs');
 
 const app = express();
 
 // convert data into JSON format
 app.use(express.json());
+app.set('view engine', 'ejs');
 
 // Static file
 app.use(express.static("public"));
@@ -135,6 +138,60 @@ app.get("/logout", (req, res) => {
       res.redirect("/login"); // Redirect to the login page after logging out
     });
   });
+
+//email-auth
+
+app.post('/send-email', async (req, res) => {
+    try {
+      // Generate a random OTP (e.g., a 6-digit number)
+      const otp = Math.floor(100000 + Math.random() * 900000);
+      const email = req.body.email;
+  
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'raghuveer@codegnan.com', // Your Gmail email address
+          pass: 'xqbiemzyxrmybhue' // Your Gmail password
+        }
+      });
+  
+      const mailOptions = {
+        from: 'raghuveer@codegnan.com', // Sender address
+        to: 'raghuveer@codegnan.com', // Recipient address
+        subject: 'Test Email from Node.js', // Subject line
+        html: `
+          <html>
+            <body>
+              <h1>Hello, John Doe</h1>
+              <p>Your OTP is: <strong>${otp}</strong></p>
+            </body>
+          </html>
+        `
+      };
+  
+      // Send email
+      await transporter.sendMail(mailOptions);
+  
+      // Send the generated OTP back to the frontend as JSON
+      res.status(200).json({ generatedOTP: otp });
+    } catch (error) {
+      console.error('Error sending email:', error);
+      res.status(500).send('An error occurred while sending the email.');
+    }
+  });
+  
+  app.post('/validate-otp', (req, res) => {
+    const enteredOTP = req.body.otp;
+    const generatedOTP = req.body.generatedOTP;
+  
+    // Perform OTP validation on the server
+    if (enteredOTP === generatedOTP) {
+      res.status(200).send('OTP is valid!');
+    } else {
+      res.status(400).send('Invalid OTP. Please try again.');
+    }
+  });
+  
 
 // Define Port for Application
 const port = 5000;
