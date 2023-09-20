@@ -31,6 +31,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+const { sendOTP } = require('./otp-service'); // Implement this module
+
 
 // Configure Passport
 require('./passport-config')(passport);
@@ -53,28 +55,29 @@ app.get("/", isLoggedIn, (req, res) => {
     res.render("index", { user: res.locals.user });
 });
 
-app.get("/terms", (req, res) => {
-    res.render("terms");
+
+app.get("/terms", isLoggedIn, (req, res) => {
+    res.render("terms", { user: res.locals.user });
 });
 
-app.get("/refunds", (req, res) => {
-    res.render("refunds");
+app.get("/refunds",  isLoggedIn, (req, res) => {
+    res.render("refunds" , { user: res.locals.user });
 });
 
-app.get("/booking", (req, res) => {
-    res.render("booking");
+app.get("/booking", isLoggedIn, (req, res) => {
+    res.render("booking" , { user: res.locals.user });
 });
 
-app.get("/privacy", (req, res) => {
-    res.render("privacy");
+app.get("/privacy",  isLoggedIn, (req, res) => {
+    res.render("privacy" , { user: res.locals.user });
 });
 
-app.get("/cancellation", (req, res) => {
-    res.render("cancellation");
+app.get("/cancellation",  isLoggedIn, (req, res) => {
+    res.render("cancellation" , { user: res.locals.user });
 });
 
 app.get("/signup", (req, res) => {
-    res.render("signup");
+    res.render("signup" , { user: res.locals.user });
 });
 
 app.post("/signup", async (req, res) => {
@@ -84,6 +87,9 @@ app.post("/signup", async (req, res) => {
         phone_number: req.body.phone_number,
         firstname: req.body.firstname
     }
+
+
+// Your existing routes and passport configuration go here
 
     // Check if the username already exists in the database
     const existingUser = await collection.findOne({ name: data.name });
@@ -122,11 +128,13 @@ app.post("/login", passport.authenticate('local', {
 
 //logout user
 app.get("/logout", (req, res) => {
-    req.logout(); // Passport function to log out the user
-    res.redirect("/login"); // Redirect to the login page after logging out
-});
-
-
+    req.logout((err) => {
+      if (err) {
+        console.error("Error logging out:", err);
+      }
+      res.redirect("/login"); // Redirect to the login page after logging out
+    });
+  });
 
 // Define Port for Application
 const port = 5000;
