@@ -6,11 +6,14 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const flash = require('connect-flash');
+const nodemailer = require('nodemailer');
+const ejs = require('ejs');
 
 const app = express();
 
 // convert data into JSON format
 app.use(express.json());
+app.set('view engine', 'ejs');
 
 // Static file
 app.use(express.static("public"));
@@ -31,6 +34,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+const { sendOTP } = require('./otp-service'); // Implement this module
+
 
 // Configure Passport
 require('./passport-config')(passport);
@@ -53,28 +58,29 @@ app.get("/", isLoggedIn, (req, res) => {
     res.render("index", { user: res.locals.user });
 });
 
-app.get("/terms", (req, res) => {
-    res.render("terms");
+
+app.get("/terms", isLoggedIn, (req, res) => {
+    res.render("terms", { user: res.locals.user });
 });
 
-app.get("/refunds", (req, res) => {
-    res.render("refunds");
+app.get("/refunds",  isLoggedIn, (req, res) => {
+    res.render("refunds" , { user: res.locals.user });
 });
 
-app.get("/booking", (req, res) => {
-    res.render("booking");
+app.get("/booking", isLoggedIn, (req, res) => {
+    res.render("booking" , { user: res.locals.user });
 });
 
-app.get("/privacy", (req, res) => {
-    res.render("privacy");
+app.get("/privacy",  isLoggedIn, (req, res) => {
+    res.render("privacy" , { user: res.locals.user });
 });
 
-app.get("/cancellation", (req, res) => {
-    res.render("cancellation");
+app.get("/cancellation",  isLoggedIn, (req, res) => {
+    res.render("cancellation" , { user: res.locals.user });
 });
 
 app.get("/signup", (req, res) => {
-    res.render("signup");
+    res.render("signup" , { user: res.locals.user });
 });
 
 app.post("/signup", async (req, res) => {
@@ -84,6 +90,9 @@ app.post("/signup", async (req, res) => {
         phone_number: req.body.phone_number,
         firstname: req.body.firstname
     }
+
+
+// Your existing routes and passport configuration go here
 
     // Check if the username already exists in the database
     const existingUser = await collection.findOne({ name: data.name });
@@ -122,11 +131,67 @@ app.post("/login", passport.authenticate('local', {
 
 //logout user
 app.get("/logout", (req, res) => {
-    req.logout(); // Passport function to log out the user
-    res.redirect("/login"); // Redirect to the login page after logging out
-});
+    req.logout((err) => {
+      if (err) {
+        console.error("Error logging out:", err);
+      }
+      res.redirect("/login"); // Redirect to the login page after logging out
+    });
+  });
 
+//email-auth
 
+app.post('/send-email', async (req, res) => {
+    try {
+      // Generate a random OTP (e.g., a 6-digit number)
+      const otp = Math.floor(100000 + Math.random() * 900000);
+      const email = req.body.email;
+  
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'raghuveer@codegnan.com', // Your Gmail email address
+          pass: 'xqbiemzyxrmybhue' // Your Gmail password
+        }
+      });
+  
+      const mailOptions = {
+        from: 'raghuveer@codegnan.com', // Sender address
+        to: 'raghuveer@codegnan.com', // Recipient address
+        subject: 'Test Email from Node.js', // Subject line
+        html: `
+          <html>
+            <body>
+              <h1>Hello, John Doe</h1>
+              <p>Your OTP is: <strong>${otp}</strong></p>
+            </body>
+          </html>
+        `
+      };
+  
+      // Send email
+      await transporter.sendMail(mailOptions);
+  
+      // Send the generated OTP back to the frontend as JSON
+      res.status(200).json({ generatedOTP: otp });
+    } catch (error) {
+      console.error('Error sending email:', error);
+      res.status(500).send('An error occurred while sending the email.');
+    }
+  });
+  
+  app.post('/validate-otp', (req, res) => {
+    const enteredOTP = req.body.otp;
+    const generatedOTP = req.body.generatedOTP;
+  
+    // Perform OTP validation on the server
+    if (enteredOTP === generatedOTP) {
+      res.status(200).send('OTP is valid!');
+    } else {
+      res.status(400).send('Invalid OTP. Please try again.');
+    }
+  });
+  
 
 // Define Port for Application
 const port = 5000;

@@ -117,42 +117,11 @@
 
 
     <!-- Header Start -->
-    <div class="container bg-dark px-0">
-        <div class="row gx-0">
-            <div class="col-lg-3 bg-dark d-none d-lg-block">
-                <a href="index.html"
-                    class="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
-                    <img src="https://res.cloudinary.com/dxujeg5en/image/upload/v1694517858/DSA_Logo_New_udtixz.png"
-                        class="image-logo" alt="Logo">
-                </a>
-            </div>
-            <div class="col-lg-9">
-                <nav class="navbar navbar-expand-lg bg-dark navbar-dark p-3 p-lg-0">
-                    <a href="index.html" class="navbar-brand d-block d-lg-none">
-                        <img src="https://res.cloudinary.com/dxujeg5en/image/upload/v1694517858/DSA_Logo_New_udtixz.png"
-                            class="image-logo" alt="Logo">
-                    </a>
-                    <button type="button" class="navbar-toggler" data-bs-toggle="collapse"
-                        data-bs-target="#navbarCollapse">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                        <div class="navbar-nav mr-auto py-0">
-                            <a href="/" class="nav-item nav-link active">Home</a>
-                            <a href="/" class="nav-item nav-link">About</a>
-                            <a href="/" class="nav-item nav-link">Games</a>
-                            <a href="/" class="nav-item nav-link">Booking</a>
-                            <a href="/login" class="nav-item nav-link">Login</a>
-                            <a href="/signup" class="nav-item nav-link">Register</a>
-
-                        </div>
-
-                    </div>
-            </div>
-            </nav>
-        </div>
-    </div>
-    </div>
+    <% if (user) { %>
+        <%- include('navbarlogout.ejs') %>
+      <% } else { %>
+        <%- include('navbar.ejs') %>
+      <% } %>
     <!-- <section class="vh-90" style="background-color: #eee;"> -->
     <div class="container h-90">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -219,16 +188,100 @@
                                             I agree all statements in <a href="#!">Terms of service</a>
                                         </label>
                                     </div>
-                                    <div class="d-flex flex-row align-items-center mb-4">
-                                        <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-                                        <div class="form-outline flex-fill mb-0">
-                                            <input type="email" id="formE" class="form-control" />
+                                   <!-- Add this section inside your form -->
+<div class="d-flex flex-row align-items-center mb-4">
+    <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+    <form action="/validate-otp" method="post" class="form-outline flex-fill mb-0">
+        <input type="text" id="otpInput" name="otp" placeholder="Enter OTP" class="form-control" />
+        <input type="hidden" id="emailInput" name="email" value="" />
+        <input type="hidden" id="generatedOTPInput" name="generatedOTP" value="" />
+      
+        <button type="button" class="btn btn-primary ms-3" id="validateOTPButton">Validate OTP</button>
+      </form>
+      
+    
+   
+</div>
 
-                                            <label class="form-label" for="form3Example3c">Email OTP </label>
-                                            <button type="button" class="btn btn-primary ms-3">Send OTP</button>
-                                        </div>
+<!-- JavaScript for sending OTP via AJAX -->
+<script>
 
-                                    </div>
+document.addEventListener('DOMContentLoaded', () => {
+  const otpInput = document.getElementById('otpInput');
+  const emailInput = document.getElementById('emailInput');
+  const generatedOTPInput = document.getElementById('generatedOTPInput');
+  const validateOTPButton = document.getElementById('validateOTPButton');
+
+  // Event listener for the "Validate OTP" button click
+  validateOTPButton.addEventListener('click', () => {
+    const enteredOTP = otpInput.value;
+    const email = emailInput.value;
+    const generatedOTP = generatedOTPInput.value;
+
+    if (enteredOTP === generatedOTP) {
+      alert('OTP is valid!');
+      // You can redirect the user to a success page or perform other actions here
+    } else {
+      alert('Invalid OTP. Please try again.');
+    }
+  });
+
+  // Event listener for the "Send OTP" button click
+  document.getElementById('sendOTPButton').addEventListener('click', async () => {
+    try {
+      const response = await fetch('/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        generatedOTPInput.value = data.generatedOTP;
+        alert('OTP sent successfully!');
+      } else {
+        alert('Failed to send OTP. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form');
+
+    form.addEventListener('submit', function (event) {
+        // Validate fields before submitting the form
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        // Handle additional validation, e.g., checking if passwords match or other custom validation
+
+        // Example: Checking if passwords match
+        const passwordField = document.getElementById('form3Example4c');
+        const confirmPasswordField = document.getElementById('form3Example4cd');
+        const password = passwordField.value;
+        const confirmPassword = confirmPasswordField.value;
+
+        if (password !== confirmPassword) {
+            // Passwords don't match
+            confirmPasswordField.setCustomValidity("Passwords don't match");
+            event.preventDefault();
+            event.stopPropagation();
+        } else {
+            // Passwords match, clear custom validation message
+            confirmPasswordField.setCustomValidity('');
+        }
+
+        form.classList.add('was-validated');
+    });
+});
+</script>
 
                                     <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                                         <button type="submit" class="btn btn-primary btn-lg">Register</button>
@@ -251,68 +304,7 @@
 
 
     <!-- Footer Start -->
-    <div class="footer container-fluid bg-dark text-light footer wow fadeIn" data-wow-delay="0.1s">
-        <div class="container pb-5">
-            <div class="row g-5">
-                <div class="col-md-6 col-lg-3">
-                    <div class="rounded p-2">
-                        <a href="index.html">
-                            <img src="https://res.cloudinary.com/dxujeg5en/image/upload/v1694517858/DSA_Logo_New_udtixz.png"
-                                class="image-footer" alt="Logo">
-
-                        </a>
-
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <h6 class="section-title text-start text-primary text-uppercase mb-4">Contact</h6>
-                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Nagarjuna University Road, Mangalagiri,
-                        Kantheru, Andhra Pradesh 522510
-                    </p>
-                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+91 8330949999</p>
-                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>doctorssportsacademy@gmail.com</p>
-                    <div class="d-flex pt-2">
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-5 col-md-12">
-                    <div class="row gy-5 g-4">
-                        <div class="col-md-6">
-                            <h6 class="section-title text-start text-primary text-uppercase mb-4">Quick Links</h6>
-                            <a class="btn btn-link" href="Terms.html">Terms & Condition</a>
-                            <a class="btn btn-link" href="privacypolicy.html">Privacy & Policy</a>
-                            <a class="btn btn-link" href="cancellation.html">Cancellation Policy</a>
-                            <a class="btn btn-link" href="Refunds.html">Refunds</a>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="copyright">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        &copy; <a class="border-bottom" href="#">DSA SPORT</a>, All Right Reserved.
-
-
-                        Designed By <a class="border-bottom" href="">Codegnan</a>
-                    </div>
-                    <div class="col-md-6 text-center text-md-end">
-                        <div class="footer-menu">
-                            <a href="">Home</a>
-                            <a href="">Cookies</a>
-                            <a href="">Help</a>
-                            <a href="">FQAs</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <%- include('footer.ejs') %>
     <!-- Footer End -->
 
 
