@@ -48,45 +48,22 @@
 
     <!--myu style code-->
     <style>
-        .container {
-            max-width: 100vw;
-        }
+       
         body{
            background-image:linear-gradient(beige,bisque,beige) ;
         }
 
-        .image-logo {
-            width: 5vw
-        }
-
-        .register {
-            font-size: 2rem;
-            text-align: center;
-        }
+        
 
         .ground-highlight-images img {
             width: 30vw;
             min-height: 45vh;
         }
 
-        .footer {
-            margin-top: 6%;
-        }
 
-        .image-footer {
-            width: 10vw;
-        }
-
-        @media (max-width:992px) {
-            .image-logo {
-                width: 9vw
-            }
-        }
 
         @media (max-width:458px) {
-            .image-logo {
-                width: 13vw
-            }
+            
 
             .ground-highlight-images img {
                 width: 35vw !important;
@@ -136,14 +113,14 @@
                         </div>
                         <!-- <h3 style="border: 0.5px solid rgb(1, 1, 1); background-color: rgb(35, 245, 35); width: 100%; font-size: 14px; color: white; padding: 5px 2px; ">Earn 3 Karma points on every booking!</h3> -->
 
-                        <form id="booking-form">
+                        <form id="booking-form" action="/book" method="post">
 
 
                             <div class="form-group">
                                 <br>
                                 <br>
                                 <label for="exampleInputEmail1" style="color: #000000; font-size: x-large;">Date</label>
-                                <input class="date form-control" id="date" type="text" autocomplete="one-time-code" autocomplete="off" required>
+                                <input class="date form-control" name="date" id="date" type="text" autocomplete="one-time-code" autocomplete="off" required>
                             </div>
                             <br>
                             <br>
@@ -217,19 +194,6 @@
                 });
             }
         })
-        // .on('changeDate', function (e) {
-        //     console.log("111");
-        //     var date = e.format();
-        //     $(this).datepicker('hide');
-        //     var timeslot = createTimeSlots(date);
-        //     $("#timeslot option[value!='']").remove();
-        //     // $("option[class='val']").remove();
-        //     console.log(timeslot);
-        //     timeslot.forEach(element => {
-        //         $('#timeslot').append(new Option(element.startTime + " - " + element.endTime + " Rs. " + element.price, element.startTime + "|" + element.endTime + "|" + element.price));
-        //     });
-        // });
-
         function createTimeSlots(date_val) {
             const date = new Date(date_val);
             // Get the current date

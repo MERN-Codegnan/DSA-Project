@@ -1,3 +1,29 @@
+<style>
+    .container {
+            max-width: 100vw;
+        }
+
+        .image-logo {
+            width: 5vw
+        }
+
+        .register {
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        @media (max-width:992px){
+            .image-logo{
+                width:9vw
+            }
+        }
+        @media (max-width:458px){
+            .image-logo{
+                width:13vw
+            }
+        }
+
+</style>
 <div class="container bg-dark px-0">
     <div class="row gx-0">
         <div class="col-lg-3 bg-dark d-none d-lg-block">
@@ -19,9 +45,9 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto py-0">
-                        <a href="/index" class="nav-item nav-link active">Home</a>
-                        <a href="/" class="nav-item nav-link">About</a>
-                        <a href="/" class="nav-item nav-link">Games</a>
+                        <a href="/" class="nav-item nav-link active">Home</a>
+                        <a href="/about" class="nav-item nav-link">About</a>
+                        <a href="/games" class="nav-item nav-link">Games</a>
                         <a href="/booking" class="nav-item nav-link">Booking</a>
                         <a href="/login" class="nav-item nav-link">Login</a>
                         <a href="/signup" class="nav-item nav-link">Register</a>
