@@ -10,7 +10,7 @@ const flash = require('connect-flash');
 const nodemailer = require('nodemailer');
 const ejs = require('ejs');
 const connectDB = require("./db"); // Import the database connection function
-
+const { createHmac } = require("crypto");
 // Call the connectDB function to establish the database connection
 connectDB();
 const app = express();
@@ -220,6 +220,149 @@ app.post('/send-email', async (req, res) => {
     }
   });
   
+/* */
+app.get("/forgot-password", (req, res) => {
+  res.render("forgot-password");
+});
+
+app.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+  const user = await collection.findOne({ email: email });
+ console.log("from forget password route",email,user)
+  if (!user) {
+    res.status(404).send("User with this email not found");
+  }
+
+  const { otp, fullHash } = generateOtp(email);
+
+  try {
+    const subject = "Reset password";
+    const text = `
+                  <html>
+                    <body>
+                      <h1>Hello, ${user.email}</h1>
+                      <p>Your OTP is: <strong>${otp}</strong></p>
+                    </body>
+                  </html>`;
+
+    const msg = { from: "max@arleven.com", to: email, subject, text };
+    await transport.sendMail(msg);
+  } catch (error) {
+    console.error(error);
+  }
+
+  Object.assign(user, {
+    hash: fullHash,
+  });
+
+  await user.save();
+
+  res.redirect(`/reset-password?email=${email}`);
+});
+
+
+
+
+const generateOtp = (email) => {
+  const otp = Math.floor(100000 + Math.random() * 900000);
+  const ttl = 5 * 60 * 1000;
+  const expires = Date.now() + ttl;
+  const hash = generateOtpHash(email, otp, expires);
+  const fullHash = `${hash}.${expires}`;
+
+  return {
+    otp,
+    fullHash,
+  };
+};
+
+const host = "smtp.gmail.com";
+const userhost = "raghuveer@codegnan.com";
+const passhost = "dfkofuklqzcgxbzo";
+
+const transport = nodemailer.createTransport({
+  host,
+  port: 587,
+  auth: {
+    user: userhost,
+    pass: passhost,
+    }
+});
+
+transport
+  .verify()
+  .then(() => console.log("Connected to email server"))
+  .catch(() =>
+    console.error(
+      "Unable to connect to email server. Make sure you have configured the SMTP options right"
+    )
+  );
+
+  const aVeryLongSafeString =
+  "874410ea46e7a92edcffd67911d1819c3d36ab93f00cc3de6f05ade3083a89a316f8d3207d86518f72f845a2ff771a92b98ef6fb233e48391b654240219b45ec";
+
+  const generateOtpHash = (email, otp, expires) => {
+    const data = `${email}.${otp}.${expires}`;
+    return createHmac("sha256", aVeryLongSafeString).update(data).digest("hex");
+  };
+  
+  const verifyOtp = (hash, email, otp) => {
+    console.log("from verify otp",hash)
+    const [hashValue, expires] = hash.split(".");
+    const now = Date.now();
+  
+    if (now > parseInt(expires, 10)) {
+      return {
+        error: "OTP Expired",
+      };
+    }
+  
+    const expiresAt = Number(expires);
+  
+    const newCalculatedHash = generateOtpHash(email, otp, expiresAt);
+    console.log("from verify otp function hashvalue and newcalculated",newCalculatedHash,hashValue)
+    if (newCalculatedHash !== hashValue) {
+      return {
+        error: "Incorrect OTP",
+      };
+    }
+  };
+
+
+
+
+app.get("/reset-password", (req, res) => {
+  const { email } = req.query;
+  res.render("reset-password", { email });
+});
+
+app.post("/reset-password", async (req, res) => {
+  const { email, otp, password } = req.body;
+  const user = await collection.findOne({ email: email });
+
+  if (!user) {
+    res.status(404).send("No user found with this email");
+  }
+
+  const status = verifyOtp(user.hash, email, otp);
+
+  if (status && status.error) {
+    return res.status(400).json(status.error);
+  }
+
+  const saltRounds = 10; // Number of salt rounds for bcrypt
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+  Object.assign(user, {
+    hash: "",
+    password: hashedPassword,
+  });
+
+  await user.save();
+
+  res.redirect("/login");
+});
+/* */
 
 // Define Port for Application
 const port = 5000;

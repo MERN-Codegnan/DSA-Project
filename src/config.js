@@ -18,6 +18,13 @@ const Loginschema = new mongoose.Schema({
     phone_number:{
         type:String,
         required:true
+    },
+    hash: {
+        type: String,
+        required: false,
+        default: '',
+        trim: true,
+        private: true,
     }
 });
 
