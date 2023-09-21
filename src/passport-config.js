@@ -23,7 +23,7 @@ module.exports = function (passport) {
     // Define the local strategy for username and password authentication
     passport.use(new LocalStrategy(async (username, password, done) => {
         try {
-            const user = await collection.findOne({ name: username });
+            const user = await collection.findOne({ email: username });
             if (!user) {
                 return done(null, false, { message: "User not found" });
             }
