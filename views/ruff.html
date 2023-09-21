@@ -133,7 +133,7 @@
 
                                                     <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
 
-                                                    <form  action="/signup" method="post" class="mx-1 mx-md-4">
+                                                    <form action="/signup" method="post" class="mx-1 mx-md-4">
 
                                                         <div class="d-flex flex-row align-items-center mb-4">
                                                             <i class="fas fa-user fa-lg me-3 fa-fw"></i>
@@ -199,22 +199,24 @@
                                                         <!-- Add this section inside your form -->
                                                         <div class="d-flex flex-row align-items-center mb-4">
                                                             <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-                                                            <button type="submit" class="btn btn-primary ms-3" id="sendOTPButton">Send OTP</button>
-                                                            <div class="form-outline flex-fill mb-0">
-                                                                <input type="text" id="otpcheck" name="otpcheck" placeholder="Enter OTP here" class="form-control"  onkeyup="checkOtpLength()"/>
-                                                            </div>    
+                                                            <form class="form-outline flex-fill mb-0" id="otpForm" action="/send_otp" method="post">
+                                                                <input type="text" id="form3Example3c" name="email" placeholder="Enter Email" class="form-control" />
+                                                                <button type="submit" class="btn btn-primary ms-3" id="sendOTPButton">Send OTP</button>
+                                                            </form>                                                            
+
+
+
                                                         </div>
 
                                                         <!-- JavaScript for sending OTP via AJAX -->
-<script>
-let otpFromBackend;
-document.getElementById('sendOTPButton').addEventListener('click', function(event) {
+                                                        <script>
+                                                            document.getElementById('sendOTPButton').addEventListener('click', function(event) {
     event.preventDefault(); // Prevent the default form submission behavior
 
     const emailInput = document.getElementById('form3Example3c').value;
-    console.log(emailInput)
+
     // Make an HTTP POST request to the server
-    fetch('/send-email', {
+    fetch('/send_otp', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -224,41 +226,13 @@ document.getElementById('sendOTPButton').addEventListener('click', function(even
     .then(response => response.json())
     .then(data => {
         console.log('Server response:', data);
-        otpFromBackend=data.generatedOTP;
         // Handle the server response here
     })
     .catch(error => console.error('Error:', error));
 });
 
-//validating otp code
-function checkOtpLength() {
-            var otpInput = document.getElementById('otpcheck');
-            if (otpInput.value.length === 6) {
-                // Call your function here
-                // For example, you can call a function named "handleSixDigits"
-                validateOtp();
-            }
-        }
-function validateOtp(){
-    console.log("from validate function",otpFromBackend)
-    var otpCheck=document.getElementById("otpcheck").value
-    if(otpCheck!=otpFromBackend){
-        alert("OTP miss match... Please Check once again")
-        return false
-    }
-    else{
-        alert("matches")
-        document.querySelector("#register").classList.remove("disabled")
-    }
-    return true
-}
 
-function formValidation(){
-    return true
-}
-
-
-                                                            /*document.addEventListener('DOMContentLoaded', () => {
+                                                            document.addEventListener('DOMContentLoaded', () => {
 
                                                                 const emailInput = document.getElementById('form3Example3c');
                                                                 // const generatedOTPInput = document.getElementById('generatedOTPInput');
@@ -276,11 +250,31 @@ function formValidation(){
                                                                     } else {
                                                                         alert('Invalid OTP. Please try again.');
                                                                     }
-                                                                });
+                                                                });*/
 
                                                                 // Event listener for the "Send OTP" button click
-                                                                
-                                                            });*/
+                                                                document.getElementById('sendOTPButton').addEventListener('click', async () => {
+                                                                    try {
+                                                                        const response = await fetch('/send-email', {
+                                                                            method: 'POST',
+                                                                            headers: {
+                                                                                'Content-Type': 'application/json',
+                                                                            },
+                                                                            body: JSON.stringify({ email: emailInput }),
+                                                                        });
+                                                                        console.log("on sendOTPButton", response)
+                                                                        if (response.ok) {
+                                                                            const data = await response.json();
+                                                                            generatedOTPInput.value = data.generatedOTP;
+                                                                            alert('OTP sent successfully!');
+                                                                        } else {
+                                                                            alert('Failed to send OTP. Please try again.');
+                                                                        }
+                                                                    } catch (error) {
+                                                                        console.error('Error:', error);
+                                                                    }
+                                                                });
+                                                            });
 
                                                             /*document.addEventListener('DOMContentLoaded', function () {
                                                                 const form = document.querySelector('form');
@@ -313,11 +307,11 @@ function formValidation(){
                                                                     form.classList.add('was-validated');
                                                                 });
                                                             });*/
-</script>
+                                                        </script>
 
                                                         <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                                                            <button id="register" type="submit"
-                                                                class="btn btn-primary btn-lg disabled">Register</button>
+                                                            <button type="submit"
+                                                                class="btn btn-primary btn-lg">Register</button>
                                                         </div>
 
                                                     </form>
@@ -358,5 +352,42 @@ function formValidation(){
 
                             <!-- Template Javascript -->
                             <script src="js/main.js"></script>
+
+
 </body>
+
 </html>
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignUp</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>SignUp</h2>
+    <form action="/signup" method="post">
+        
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="username" placeholder="Enter your name" required autocomplete="off">
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+        </div>
+        
+        <button type="submit" class="submit-btn">Submit</button>
+    </form>
+</div>
+
+    
+</body>
+</html> -->
