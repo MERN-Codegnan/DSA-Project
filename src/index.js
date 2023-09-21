@@ -90,7 +90,7 @@ app.post("/signup", async (req, res) => {
         phone_number: req.body.phone_number,
         firstname: req.body.firstname
     }
-
+console.log(data)
 
 // Your existing routes and passport configuration go here
 
@@ -110,6 +110,7 @@ app.post("/signup", async (req, res) => {
 
         // Create a new user document
         const newUser = new collection(data);
+        console.log("new collecton",newUser)
         await newUser.save();
         
         // Redirect to the login page
@@ -140,11 +141,11 @@ app.get("/logout", (req, res) => {
   });
 
 //email-auth
-
+const otp = Math.floor(100000 + Math.random() * 900000);
 app.post('/send-email', async (req, res) => {
     try {
       // Generate a random OTP (e.g., a 6-digit number)
-      const otp = Math.floor(100000 + Math.random() * 900000);
+      
       const email = req.body.email;
   
       const transporter = nodemailer.createTransport({
@@ -157,7 +158,7 @@ app.post('/send-email', async (req, res) => {
   
       const mailOptions = {
         from: 'raghuveer@codegnan.com', // Sender address
-        to: 'raghuveer@codegnan.com', // Recipient address
+        to: `${email}`, // Recipient address
         subject: 'Test Email from Node.js', // Subject line
         html: `
           <html>
@@ -180,6 +181,7 @@ app.post('/send-email', async (req, res) => {
     }
   });
   
+  //otp validating on page submission
   app.post('/validate-otp', (req, res) => {
     const enteredOTP = req.body.otp;
     const generatedOTP = req.body.generatedOTP;
