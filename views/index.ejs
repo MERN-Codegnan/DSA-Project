@@ -55,67 +55,14 @@
             /* Add some margin to separate the images */
             align-items: center;
         }
-
-        @media (max-width: 768px) {
-            .ground-highlight-images {
-                flex-direction: column;
-                /* Change to a column layout on mobile screens */
-                align-items: center;
-
-            }
-
-            .ground-highlight-images img {
-                width: 400px;
-                
-                /* Set a fixed width for all images */
-            }
+        .content {
+            display: flex;
+            align-content: center;
+            justify-content: center;
         }
-
         
-  
 
-        .container {
-            max-width: 100vw;
-        }
-
-        .image-logo {
-            width: 5vw
-        }
-
-        .register {
-            font-size: 2rem;
-            text-align: center;
-        }
-
-        .footer {
-            margin-top: 6%;
-        }
-
-        .image-footer {
-            width: 10vw;
-        }
-
-        @media (max-width:992px) {
-            .image-logo {
-                width: 9vw
-            }
-        }
-
-        @media (max-width: 420px) {
-            .ground-highlight-images img {
-                width: 300px;
-                height: 250px;
-                
-            }
-        }
-
-        @media (max-width:458px) {
-            .image-logo {
-                width: 13vw
-            }
-
-        }
-
+    
         .letter {
             text-transform: uppercase;
             background-color: #fff;
@@ -131,89 +78,35 @@
             font-family: bungee, sans-serif;
             letter-spacing: 1px;
         }
-
-
         @keyframes letter-fade-in {
             to {
                 opacity: 1;
             }
         }
 
-      
-
-        .content {
-            display: flex;
-            align-content: center;
-            justify-content: center;
-        }
-
-        .text_shadows {
-            text-shadow: 3px 3px 0 var(--color-secondary), 6px 6px 0 var(--color-tertiary),
-                9px 9px var(--color-quaternary), 12px 12px 0 var(--color-quinary);
-            font-family: bungee, sans-serif;
-            font-weight: 400;
-            text-transform: uppercase;
-            font-size: 50px;
-            text-align: center;
-            margin: 0;
-            color: var(--color-primary);
-            color: transparent;
-            background-color: white;
-            background-clip: text;
-            letter-spacing: 0.4rem;
-        }
-
-
-        @keyframes move {
-            0% {
-                transform: translate(0px, 0px);
-            }
-
-            40% {
-                transform: translate(-12px, -12px);
-            }
-
-            50% {
-                transform: translate(-12px, -12px);
-            }
-
-            60% {
-                transform: translate(-12px, -12px);
-            }
-
-            100% {
-                transform: translate(0px, 0px);
-            }
-        }
-
-        /* Media query for smaller screens */
         @media (max-width: 768px) {
-            .text_shadows {
-                font-size: 30px;
-                /* Adjust the font size for h2 on smaller screens */
+            .ground-highlight-images {
+                flex-direction: column;
+                /* Change to a column layout on mobile screens */
+                align-items: center;
+
             }
 
-            .animate-charcter {
-                font-size: 20px;
-                /* Adjust the font size for h3 on smaller screens */
+            .ground-highlight-images img {
+                width: 400px;
+                
+                /* Set a fixed width for all images */
+            }
+            
+        }
+        @media (max-width: 420px) {
+            .ground-highlight-images img {
+                width: 300px;
+                height: 250px;
+                
             }
         }
-
-        /* Media query for even smaller screens */
-        @media (max-width: 480px) {
-            .text_shadows {
-                font-size: 24px;
-                /* Adjust the font size for h2 on even smaller screens */
-            }
-
-            .animate-charcter {
-                font-size: 16px;
-                /* Adjust the font size for h3 on even smaller screens */
-            }
-        }
-
-
-
+       
     </style>
 </head>
 

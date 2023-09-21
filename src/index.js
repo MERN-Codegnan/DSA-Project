@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const collection = require("./config");
+const bookConfig =require("./bookConfig")
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
@@ -8,7 +9,10 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const nodemailer = require('nodemailer');
 const ejs = require('ejs');
+const connectDB = require("./db"); // Import the database connection function
 
+// Call the connectDB function to establish the database connection
+connectDB();
 const app = express();
 
 // convert data into JSON format
@@ -75,6 +79,14 @@ app.get("/privacy",  isLoggedIn, (req, res) => {
     res.render("privacy" , { user: res.locals.user });
 });
 
+app.get("/about",  isLoggedIn, (req, res) => {
+  res.render("about" , { user: res.locals.user });
+});
+
+app.get("/games",  isLoggedIn, (req, res) => {
+  res.render("games" , { user: res.locals.user });
+});
+
 app.get("/cancellation",  isLoggedIn, (req, res) => {
     res.render("cancellation" , { user: res.locals.user });
 });
@@ -85,19 +97,20 @@ app.get("/signup", (req, res) => {
 
 app.post("/signup", async (req, res) => {
     const data = {
-        name: req.body.username,
+        email: req.body.username,
         password: req.body.password,
         phone_number: req.body.phone_number,
         firstname: req.body.firstname
     }
-console.log(data)
+console.log("base username for signup --- data",data)
 
 // Your existing routes and passport configuration go here
 
     // Check if the username already exists in the database
-    const existingUser = await collection.findOne({ name: data.name });
-
+    const existingUser = await collection.findOne({ email: data.email });
+    console.log("existing user",existingUser)
     if (existingUser) {
+      console.log("existing user function logic")
         // User already exists, redirect to signup page with a flash message
         req.flash('error', 'User already exists. Please choose a different username.');
         res.redirect("/signup");
@@ -107,14 +120,27 @@ console.log(data)
         const hashedPassword = await bcrypt.hash(data.password, saltRounds);
 
         data.password = hashedPassword; // Replace the original password with the hashed one
-
+      
         // Create a new user document
-        const newUser = new collection(data);
-        console.log("new collecton",newUser)
-        await newUser.save();
+        try {
+          // Your existing code
+      
+          // Create a new user document
+          const newUser = new collection(data);
+          console.log("newuser in try block",newUser)
+          await newUser.save();
+      
+          // Redirect to the login page
+          return res.redirect("/login");
+      } catch (error) {
+        console.error("Error in signup:", error);
+        console.error("Attempted data:", data);
+          req.flash('error', 'An error occurred during signup. Please try again.');
+          return res.redirect("/signup");
+      }
         
         // Redirect to the login page
-        res.redirect("/login");
+       return  res.redirect("/login");
     }
 });
 
@@ -152,7 +178,7 @@ app.post('/send-email', async (req, res) => {
         service: 'gmail',
         auth: {
           user: 'raghuveer@codegnan.com', // Your Gmail email address
-          pass: 'xqbiemzyxrmybhue' // Your Gmail password
+          pass: 'dfkofuklqzcgxbzo' // Your Gmail password
         }
       });
   
