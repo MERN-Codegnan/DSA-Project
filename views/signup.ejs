@@ -39,18 +39,7 @@
         /* *{
       border: 1px solid red;
     } */
-        .container {
-            max-width: 100vw;
-        }
-
-        .register {
-            font-size: 2rem;
-            text-align: center;
-        }
-
-        .image-logo {
-            width: 5vw
-        }
+       
 
         .term-para {
             color: navy;
@@ -63,13 +52,8 @@
             font-size: 1.4rem;
         }
 
-        .footer {
-            margin-top: 6%;
-        }
+       
 
-        .image-footer {
-            width: 10vw;
-        }
 
         @media (max-width:458px) {
             .image-fluid {
@@ -89,11 +73,25 @@
             .col-md-9 {
                 display: none;
             }
+            #sendOTPButton{
+                width:16% !important;
+            }
         }
 
-        @media (max-width:458px) {
+        @media (max-width:600px){
+            #sendOTPButton{
+                padding:2.5% 0.3%;
+                font-size:0.68rem !important;
+            }
+        }
+
+        @media (max-width:430px){
             .image-fluid {
                 width: 13vw
+            }
+            #sendOTPButton{
+                padding:3.6% 0.3% !important;
+                font-size:0.58rem !important;
             }
         }
 
@@ -117,11 +115,8 @@
 
 
     <!-- Header Start -->
-    <% if (user) { %>
-        <%- include('navbarlogout.ejs') %>
-            <% } else { %>
+    
                 <%- include('navbar.ejs') %>
-                    <% } %>
                         <!-- <section class="vh-90" style="background-color: #eee;"> -->
                         <div class="container h-90">
                             <div class="row d-flex justify-content-center align-items-center h-100">
@@ -133,55 +128,65 @@
 
                                                     <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
 
-                                                    <form  action="/signup" method="post" class="mx-1 mx-md-4">
+                                                    <form onsubmit="return formValidation()" action="/signup" method="post" class="mx-1 mx-md-4">
 
                                                         <div class="d-flex flex-row align-items-center mb-4">
-                                                            <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                                            
                                                             <div class="form-outline flex-fill mb-0">
-                                                                <input type="text" name="firstname" id="form3Example1c"
-                                                                    class="form-control" />
+                                                                <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                                                 <label class="form-label" for="form3Example1c">Your
                                                                     Name</label>
+                                                                <input type="text" name="firstname" id="form3Example1c"
+                                                                    class="form-control"  oninput="clearError('nameError')"/>
+                                                                <span style="color:red" id="nameError" class="error"></span><br>
                                                             </div>
                                                         </div>
 
                                                         <div class="d-flex flex-row align-items-center mb-4">
-                                                            <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                                                            
                                                             <div class="form-outline flex-fill mb-0">
-                                                                <input type="email" id="form3Example3c" name="username"
-                                                                    class="form-control" />
+                                                                <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                                                                 <label class="form-label" for="form3Example3c">Your
                                                                     Email</label>
+                                                                <input type="email" id="form3Example3c" name="username"
+                                                                    class="form-control" oninput="clearError('emailError')"/>
+                                                                    <span style="color:red" id="emailError" class="error"></span><br>
                                                             </div>
                                                         </div>
 
                                                         <div class="d-flex flex-row align-items-center mb-4">
-                                                            <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                                                            
                                                             <div class="form-outline flex-fill mb-0">
-                                                                <input name="password" type="password"
-                                                                    id="form3Example4c" class="form-control" />
+                                                                <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                                                 <label class="form-label"
-                                                                    for="form3Example4c">Password</label>
+                                                                for="form3Example4c">Password</label>
+                                                                <input name="password" type="password"
+                                                                    id="form3Example4c" class="form-control" oninput="clearError('passwordError')"/>
+                                                                    <span style="color:red" id="passwordError" class="error"></span><br>
                                                             </div>
                                                         </div>
 
                                                         <div class="d-flex flex-row align-items-center mb-4">
-                                                            <i class="fas fa-key fa-lg me-3 fa-fw"></i>
+                                                           
                                                             <div class="form-outline flex-fill mb-0">
-                                                                <input type="password" id="form3Example4cd"
-                                                                    class="form-control" />
+                                                                <i class="fas fa-key fa-lg me-3 fa-fw"></i>
                                                                 <label class="form-label" for="form3Example4cd">Repeat
                                                                     your password</label>
+                                                                <input type="password" id="form3Example4cd"
+                                                                    class="form-control" oninput="clearError('confirmPasswordError')"/>
+                                                                    <span style="color:red" id="confirmPasswordError" class="error"></span><br>
                                                             </div>
                                                         </div>
 
                                                         <div class="d-flex flex-row align-items-center mb-4">
-                                                            <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                                                             <div class="form-outline flex-fill mb-0">
-                                                                <input type="text" name="phone_number" id="formE"
-                                                                    class="form-control" />
+                                                                <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
                                                                 <label class="form-label" for="form3Example3c">Phone
                                                                     number </label>
+                                                                <input type="text" name="phone_number" id="form3Example5c"
+                                                                    class="form-control" oninput="clearError('phoneError')"/>
+                                                                    <span style="color:red" id="phoneError" class="error"></span><br>
+                                                                
                                                             </div>
 
                                                         </div>
@@ -192,132 +197,22 @@
                                                             <input class="form-check-input me-2" type="checkbox"
                                                                 value="" id="form2Example3c" />
                                                             <label class="form-check-label" for="form2Example3">
-                                                                I agree all statements in <a href="#!">Terms of
+                                                                I agree all statements in <a href="/terms">Terms of
                                                                     service</a>
                                                             </label>
                                                         </div>
                                                         <!-- Add this section inside your form -->
                                                         <div class="d-flex flex-row align-items-center mb-4">
                                                             <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-                                                            <button type="submit" class="btn btn-primary ms-3" id="sendOTPButton">Send OTP</button>
+                                                            <button type="submit" class="btn btn-primary"  id="sendOTPButton">Send OTP</button>
                                                             <div class="form-outline flex-fill mb-0">
                                                                 <input type="text" id="otpcheck" name="otpcheck" placeholder="Enter OTP here" class="form-control"  onkeyup="checkOtpLength()"/>
                                                             </div>    
                                                         </div>
 
-                                                        <!-- JavaScript for sending OTP via AJAX -->
-<script>
-let otpFromBackend;
-document.getElementById('sendOTPButton').addEventListener('click', function(event) {
-    event.preventDefault(); // Prevent the default form submission behavior
-
-    const emailInput = document.getElementById('form3Example3c').value;
-    console.log(emailInput)
-    // Make an HTTP POST request to the server
-    fetch('/send-email', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email: emailInput })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Server response:', data);
-        otpFromBackend=data.generatedOTP;
-        // Handle the server response here
-    })
-    .catch(error => console.error('Error:', error));
-});
-
-//validating otp code
-function checkOtpLength() {
-            var otpInput = document.getElementById('otpcheck');
-            if (otpInput.value.length === 6) {
-                // Call your function here
-                // For example, you can call a function named "handleSixDigits"
-                validateOtp();
-            }
-        }
-function validateOtp(){
-    console.log("from validate function",otpFromBackend)
-    var otpCheck=document.getElementById("otpcheck").value
-    if(otpCheck!=otpFromBackend){
-        alert("OTP miss match... Please Check once again")
-        return false
-    }
-    else{
-        alert("matches")
-        document.querySelector("#register").classList.remove("disabled")
-    }
-    return true
-}
-
-function formValidation(){
-    return true
-}
-
-
-                                                            /*document.addEventListener('DOMContentLoaded', () => {
-
-                                                                const emailInput = document.getElementById('form3Example3c');
-                                                                // const generatedOTPInput = document.getElementById('generatedOTPInput');
-                                                                // const validateOTPButton = document.getElementById('validateOTPButton');
-                                                                // const otpInput = document.getElementById('otpInput');
-                                                                // Event listener for the "Validate OTP" button click
-                                                                /*validateOTPButton.addEventListener('click', () => {
-                                                                    const enteredOTP = otpInput.value;
-                                                                    const email = emailInput.value;
-                                                                    const generatedOTP = generatedOTPInput.value;
-
-                                                                    if (enteredOTP === generatedOTP) {
-                                                                        alert('OTP is valid!');
-                                                                        // You can redirect the user to a success page or perform other actions here
-                                                                    } else {
-                                                                        alert('Invalid OTP. Please try again.');
-                                                                    }
-                                                                });
-
-                                                                // Event listener for the "Send OTP" button click
-                                                                
-                                                            });*/
-
-                                                            /*document.addEventListener('DOMContentLoaded', function () {
-                                                                const form = document.querySelector('form');
-
-                                                                form.addEventListener('submit', function (event) {
-                                                                    // Validate fields before submitting the form
-                                                                    if (!form.checkValidity()) {
-                                                                        event.preventDefault();
-                                                                        event.stopPropagation();
-                                                                    }
-
-                                                                    // Handle additional validation, e.g., checking if passwords match or other custom validation
-
-                                                                    // Example: Checking if passwords match
-                                                                    const passwordField = document.getElementById('form3Example4c');
-                                                                    const confirmPasswordField = document.getElementById('form3Example4cd');
-                                                                    const password = passwordField.value;
-                                                                    const confirmPassword = confirmPasswordField.value;
-
-                                                                    if (password !== confirmPassword) {
-                                                                        // Passwords don't match
-                                                                        confirmPasswordField.setCustomValidity("Passwords don't match");
-                                                                        event.preventDefault();
-                                                                        event.stopPropagation();
-                                                                    } else {
-                                                                        // Passwords match, clear custom validation message
-                                                                        confirmPasswordField.setCustomValidity('');
-                                                                    }
-
-                                                                    form.classList.add('was-validated');
-                                                                });
-                                                            });*/
-</script>
-
                                                         <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                                                             <button id="register" type="submit"
-                                                                class="btn btn-primary btn-lg disabled">Register</button>
+                                                                class="btn btn-primary disabled">Register</button>
                                                         </div>
 
                                                     </form>
@@ -358,5 +253,112 @@ function formValidation(){
 
                             <!-- Template Javascript -->
                             <script src="js/main.js"></script>
+
+                                                                                    <!-- JavaScript for sending OTP via AJAX -->
+<script>
+    let otpFromBackend;
+    document.getElementById('sendOTPButton').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+    
+        const emailInput = document.getElementById('form3Example3c').value;
+        console.log(emailInput)
+        // Make an HTTP POST request to the server
+        fetch('/send-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: emailInput })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Server response:', data);
+            otpFromBackend=data.generatedOTP;
+            // Handle the server response here
+        })
+        .catch(error => console.error('Error:', error));
+    });
+    
+    //validating otp code
+    function checkOtpLength() {
+                var otpInput = document.getElementById('otpcheck');
+                if (otpInput.value.length === 6) {
+                    // Call your function here
+                    // For example, you can call a function named "handleSixDigits"
+                    validateOtp();
+                }
+            }
+    function validateOtp(){
+        console.log("from validate function",otpFromBackend)
+        var otpCheck=document.getElementById("otpcheck").value
+        if(otpCheck!=otpFromBackend){
+            alert("OTP miss match... Please Check once again")
+            return false
+        }
+        else{
+            alert("matches")
+            document.querySelector("#register").classList.remove("disabled")
+        }
+        return true
+    }
+    
+    
+    function clearError(errorId) {
+        var errorElement = document.getElementById(errorId);
+        errorElement.innerText = "";
+    }
+    
+    function formValidation() {
+        var name = document.getElementById("form3Example1c").value;
+        var email = document.getElementById("form3Example3c").value;
+        var password = document.getElementById("form3Example4c").value;
+        var confirmPassword = document.getElementById("form3Example4cd").value;
+        var phone_number = document.getElementById("form3Example5c").value;
+    
+        // Regular expressions for validation
+        var nameRegex = /^[A-Za-z\s]+$/;
+        var emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        var passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,8}$/;
+        var phoneRegex = /^\d{10}$/;
+        // Clear previous error messages
+        document.getElementById("nameError").innerText = "";
+        document.getElementById("emailError").innerText = "";
+        document.getElementById("passwordError").innerText = "";
+        document.getElementById("confirmPasswordError").innerText = "";
+        document.getElementById("phoneError").innerText = "";
+    
+        // Validate name
+        if (!name.match(nameRegex)) {
+            document.getElementById("nameError").innerText = "Please enter a valid name.";
+            return false;
+        }
+    
+        // Validate email
+        if (!email.match(emailRegex)) {
+            document.getElementById("emailError").innerText = "Please enter a valid email address.";
+            return false;
+        }
+    
+        // Validate password
+        if (!password.match(passwordRegex)) {
+            document.getElementById("passwordError").innerText = "Please enter a valid password (at least 6 characters, including one uppercase letter, one lowercase letter, and one digit).";
+            return false;
+        }
+    
+        // Validate confirmPassword
+        if (password !== confirmPassword) {
+            document.getElementById("confirmPasswordError").innerText = "Passwords do not match.";
+            return false;
+        }
+    
+        // Validate phone_number
+        if (!phone_number.match(phoneRegex)) {
+            document.getElementById("phoneError").innerText = "Please enter a valid phone number (10 digits).";
+            return false;
+        }
+        return true;
+    }
+    
+    </script>
 </body>
 </html>
