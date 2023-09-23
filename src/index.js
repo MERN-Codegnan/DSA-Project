@@ -71,22 +71,18 @@ app.get("/refunds", isLoggedIn, (req, res) => {
   res.render("refunds", { user: res.locals.user });
 });
 
-const datesArray = [];
-const timeSlotsArray = [];
+
 
 app.get("/booking", isLoggedIn, async (req, res) => {
   try {
     const bookings = await bookCollection.find();
-    console.log(bookings)
-
+    
+    const bookingList = [];
 bookings.forEach(item => {
-  datesArray.push(item.date);
-  timeSlotsArray.push(item.timeslot);
+  bookingList.push({date:item.date,timeslot:item.timeslot});
 });
 
-console.log('Dates Array:', datesArray);
-console.log('Time Slots Array:', timeSlotsArray);
-    res.render("booking", { user: res.locals.user, datesArray,timeSlotsArray});
+    res.render("booking", { user: res.locals.user, bookingList});
   } catch (error) {
     res.status(500).json({ message: 'Error fetching bookings', error: error.message });
   }
@@ -99,21 +95,11 @@ app.post("/booking", async (req, res) => {
     timeslot: req.body.timeSlot,
     price: req.body.price
   }
-  console.log("from booking route",data)
   try {
-    // Your existing code
 
-    // Create a new user document
     const newBook = new bookCollection(data);
-    console.log("newuser in try block of booking route", newBook)
     await newBook.save();
-
-    // Redirect to the login page
-    return res.render("booking", {
-      user: res.locals.user,
-      datesArray,
-      timeSlotsArray
-    });;
+    res.json({ redirectTo: '/about' });
   } catch (error) {
     console.error("Error in signup:", error);
     console.error("Attempted data:", data);
@@ -149,10 +135,6 @@ app.post("/signup", async (req, res) => {
     phone_number: req.body.phone_number,
     firstname: req.body.firstname
   }
-  console.log("base username for signup --- data", data)
-
-  // Your existing routes and passport configuration go here
-
   // Check if the username already exists in the database
   const existingUser = await collection.findOne({ email: data.email });
   console.log("existing user", existingUser)
