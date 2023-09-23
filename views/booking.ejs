@@ -91,65 +91,230 @@
           <% } else { %>
             <%- include('navbar.ejs') %>
           <% } %>
+        
     <!-- Header End -->
- 
-    <section class="container-fluid px-5">
-        <div class="container-fluid mt-5" >
-            <div class="progress-container">
-                <div class="progress-bar"></div>
-            <div class="row">
-                
-                <div class="col-lg-6">
-                    <div class="booking-item" >
-                        
-                        <div class="container-head">
-                           
-                            <div class="head">
-                                <!-- <h2>Koora Dome AI Wasl Club</h2>
-                                    
-                                <p style="font-weight: bold ;">AI Jaddaf-Oud Metha</p> -->
-                               
-                            </div>
-                        </div>
-                        <!-- <h3 style="border: 0.5px solid rgb(1, 1, 1); background-color: rgb(35, 245, 35); width: 100%; font-size: 14px; color: white; padding: 5px 2px; ">Earn 3 Karma points on every booking!</h3> -->
 
-                        <form id="booking-form" action="/book" method="post">
+    <form id="booking-form" onsubmit="return bookAction()">
+      <h1>Booking Form</h1>
+
+      <label for="exampleInputEmail1" style="color: #000000; font-size: x-large;">Select Date:</label>
+      <input class="date form-control" type="date" autocomplete="one-time-code" autocomplete="off" required
+        id="date" onchange="updateTimeSlots()">
+
+      <label for="time">Select Time Slot:</label>
+      <select id="time" onchange="updatePrice()">
+        <option>Select time slot</option>
+      </select>
+      
+      <div class="form-outline mb-4">
+        <input type="email" id="email-address" class="form-control form-control-lg"
+          placeholder="Enter a valid email address" name="email" readonly value="<%= user.email %>"/>
+        <label class="form-label" for="email-address">Email address</label>
+      </div>
+
+      <p id="priceDisplay">Price: Rs 0</p>
+      <button>Submit</button>
+    </form>
 
 
-                            <div class="form-group">
-                                <br>
-                                <br>
-                                <label for="exampleInputEmail1" style="color: #000000; font-size: x-large;">Date</label>
-                                <input class="date form-control" name="date" id="date" type="text" autocomplete="one-time-code" autocomplete="off" required>
-                            </div>
-                            <br>
-                            <br>
-                            <div class="form-group">
-                                <label for="timeslot" style="color: #000000; font-size: x-large;">Time Sloat</label>
-                                <select id="timeslot" name="timeslot" class="form-control" required>
-                                    <option value=" ">Please Select Date</option>
-                                </select>
-                            </div>
-                            <button type="submit" id="new" class="btn btn-success" style="margin-top:5%;margin-bottom: 5%;">Add to Cart</button>
-                        </form>
-                    </div>
-                </div>
-                
 
-                <!-- <script src="script.js"></script> -->
 
-                <div class="col-lg-6">
-                    <div id="cart" class="booking-item" style="background-color: aliceblue;">
-                        <h2>Cart <i class="fas fa-shopping-cart" style="color: #000000;"></i></h2>
-                        
-                        <div id="cart-items">
-                            <!-- Cart items will be displayed here -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <script>
+      let selectedDate = null;
+      let selectedTimeSlot = null;
+      let selectedPrice = 0;
+      const blockedData = "<%= datesArray %>";
+      const blockedTimeSlots = "<%= timeSlotsArray %>";
+      console.log("from booking detail",blockedData,blockedTimeSlots)
+      function updateTimeSlots() {
+        const date = new Date(document.getElementById('date').value);
+        selectedDate = date;
+        const timeSelect = document.getElementById('time');
+        selectedDate = `${selectedDate.getDate()}/${selectedDate.getMonth()+1}/${selectedDate.getFullYear()}`
+        const month = date.getMonth() + 1;  // getMonth() returns 0-based month (0: January, 1: February, ..., 11: December)
+
+        // Check if the selected month is November
+        if (month === 11) {
+          timeSelect.innerHTML = '';
+          document.getElementById('priceDisplay').innerText = 'Ground is not available in November.';
+          return;
+        }
+
+        const day = date.getDay();  // 0: Sunday, 1: Monday, ..., 6: Saturday
+
+        // Check the day and update time slots and day type accordingly
+        if (date >= new Date('2023-12-01')) {
+          if (day >= 1 && day <= 5) {  // Monday to Friday are weekdays
+            timeSelect.innerHTML = `
+      <option value="07:00-10:30">7:00 am - 10:30 am</option>
+      <option value="11:00-02:30">11:00 am - 02:30 pm</option>
+      <option value="03:00-06:30">03:00 pm - 06:30 pm</option>
+      <option value="07:00-10:00">07:00 pm - 10:00 pm</option>
+    `;
+          } else {  // Saturday and Sunday are weekends
+            timeSelect.innerHTML = `
+      <option value="07:00-10:30">7:00 am - 10:30 am</option>
+      <option value="11:00-02:30">11:00 am - 02:30 pm</option>
+      <option value="03:00-06:30">03:00 pm - 06:30 pm</option>
+      <option value="07:00-10:00">07:00 pm - 10:00 pm</option>
+    `;
+          }
+        } else if (date >= new Date('2023-10-01')) {
+          if (day >= 1 && day <= 5) {  // Monday to Friday are weekdays
+            timeSelect.innerHTML = `
+      <option value="07:00-10:30">7:00 am - 10:30 am</option>
+      <option value="11:00-02:30">11:00 am - 02:30 pm</option>
+      <option value="03:00-06:30">03:00 pm - 06:30 pm</option>
+    `;
+          } else {  // Saturday and Sunday are weekends
+            timeSelect.innerHTML = `
+      <option value="07:00-10:30">7:00 am - 10:30 am</option>
+      <option value="11:00-02:30">11:00 am - 02:30 pm</option>
+      <option value="03:00-06:30">03:00 pm - 06:30 pm</option>
+    `;
+          }
+        } else {
+          if (day >= 1 && day <= 5) {  // Monday to Friday are weekdays
+            timeSelect.innerHTML = `
+      <option value="07:00-11:30">7:00 am - 11:30 am</option>
+      <option value="12:30-05:00">12:30 pm - 05:00 pm</option>
+    `;
+          } else {  // Saturday and Sunday are weekends
+            timeSelect.innerHTML = `
+      <option value="07:00-10:30">7:00 am - 10:30 am</option>
+      <option value="12:30-05:00">12:30 am - 05:00 pm</option>
+    `;
+          }
+        }
+
+        //blocking a specific time slot 
+        
+        const options = timeSelect.options;
+        for (let i = 0; i < options.length; i++) {
+          const optionValue = options[i].value;
+          console.log("optionvalue and selected date",optionValue,selectedDate)
+          const optionDate = selectedDate  // Extract the date part from the option value
+          const optionTimeSlot = optionValue  // Extract the time slot part from the option value
+          
+          // Check if the optionDate is in the blockedData array and optionTimeSlot is in the blockedTimeslots array
+          if (blockedData.includes(optionDate) && blockedTimeSlots.includes(optionTimeSlot)) {
+            console.log("from the iffffff condition options, optionValue",options, optionValue,)
+            if(options[i].value==optionValue){
+              console.log("second if block options each value",options[i])
+              options[i].disabled = true;
+              options[i].innerText += " (Blocked)";
+            }
+          }
+        }
+
+        updatePrice();  // Update the price based on the new time slots
+      }
+
+      function updatePrice() {
+        const time = document.getElementById('time').value;
+        selectedTimeSlot = time;
+        const date = new Date(document.getElementById('date').value);
+        const day = date.getDay();  // 0: Sunday, 1: Monday, ..., 6: Saturday
+
+        // Extracting the time slot price based on the given schedule
+        let prices;
+
+        if (date >= new Date('2023-12-01')) {
+          prices = {
+            weekday: {
+              '07:00-10:30': 4500,
+              '11:00-02:30': 4500,
+              '03:00-06:30': 8000,
+              '07:00-10:00': 12000
+            },
+            weekend: {
+              '07:00-10:30': 6000,
+              '11:00-02:30': 6000,
+              '03:00-06:30': 10000,
+              '07:00-10:00': 16000
+            }
+          };
+        } else if (date >= new Date('2023-10-01')) {
+          prices = {
+            weekday: {
+              '07:00-10:30': 4500,
+              '11:00-02:30': 4500,
+              '03:00-06:30': 6000
+            },
+            weekend: {
+              '07:00-10:30': 6000,
+              '11:00-02:30': 6000,
+              '03:00-06:30': 8000
+            }
+          };
+        } else if (date >= new Date('2023-09-01')) {
+          prices = {
+            weekday: {
+              '07:00-11:30': 4500,
+              '12:30-05:00': 4500
+            },
+            weekend: {
+              '07:00-10:30': 8000,
+              '12:30-05:00': 8000
+            }
+          };
+        }
+
+        const dayType = (day >= 1 && day <= 5) ? 'weekday' : 'weekend';
+
+        const price = prices[dayType][time];
+        selectedPrice = prices[dayType][selectedTimeSlot];
+        const gst = 0.18; // GST rate
+        const totalPrice = price + (price * gst); // Add GST
+
+        console.log(selectedDate, selectedTimeSlot, selectedPrice)
+        document.getElementById('priceDisplay').innerText = `Price: Rs ${totalPrice}`;
+      }
+      
+      function bookAction() {
+        alert("from book action function")
+        var email=document.getElementById("email-address").value
+        
+        const data = {
+          email:email,
+          date: selectedDate,
+          timeSlot: selectedTimeSlot,
+          price: selectedPrice
+        };
+       
+        if (selectedDate == null || selectedTimeSlot == null || selectedPrice == 0) {
+          alert("Select the booking details properly");
+          return false
+        }
+        else if (blockedData.includes(selectedDate) && blockedTimeSlot.includes(selectedTimeSlot)) {
+          alert("This time slot on the selected date is blocked. Please choose another time slot.");
+          return false;
+        }
+        else {
+          alert("from else block")
+          fetch("/booking", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          })
+            .then(response => response.json())
+            .then(data => {
+              console.log('Success:', data);
+              
+              // Handle the response from the server if needed
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+             
+              // Handle errors if needed
+            });
+
+        }
+      }
+    </script>
+  
 
 
 
@@ -177,163 +342,6 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
-
-    <script>
-        $('.date').datepicker({
-            format: 'mm/dd/yyyy',
-            minDate: new Date(),
-            onSelect: function(dateText) {
-                var date = this.value;
-                $(this).datepicker('hide');
-                var timeslot = createTimeSlots(date);
-                $("#timeslot option[value!='']").remove();
-                // $("option[class='val']").remove();
-                console.log(timeslot);
-                timeslot.forEach(element => {
-                    $('#timeslot').append(new Option(element.startTime + " - " + element.endTime + " Rs. " + element.price, element.startTime + "|" + element.endTime + "|" + element.price));
-                });
-            }
-        })
-        function createTimeSlots(date_val) {
-            const date = new Date(date_val);
-            // Get the current date
-            var currentDate = new Date();
-
-            // Check if the date is before October 1st
-            if (date < new Date('2023-09-30')) {
-                // Use the weekend time slots
-                if (date.getDay() == 6 || date.getDay() == 0) {
-                    var timeSlots = [
-                        { startTime: '07:00', endTime: '11:30', price: 8000 },
-                        { startTime: '12:30', endTime: '05:00', price: 8000 }];
-                    return timeSlots;
-                } else {
-                    var timeSlots = [
-                        { startTime: '07:00', endTime: '11:30', price: 4500 },
-                        { startTime: '12:30', endTime: '05:00', price: 4500 }
-                    ];
-                    return timeSlots;
-                }
-            } else if (date < new Date('2023-11-30')) {
-                //october to december 
-                if (date.getDay() == 6 || date.getDay() == 0) {
-                    var timeSlots = [
-                        { startTime: '07:00', endTime: '10:30', price: 6000 },
-                        { startTime: '11:00', endTime: '02:30', price: 6000 },
-                        { startTime: '03:00', endTime: '06:30', price: 8000 }];
-                    return timeSlots;
-                } else {
-                    var timeSlots = [
-                        { startTime: '07:00', endTime: '10:30', price: 4500 },
-                        { startTime: '11:00', endTime: '02:30', price: 4500 },
-                        { startTime: '03:00', endTime: '06:30', price: 6000 }
-                    ];
-                    return timeSlots;
-                }
-            } else {
-                //october to december 
-                if (date.getDay() == 6 || date.getDay() == 0) {
-                    var timeSlots = [
-                        { startTime: '07:00', endTime: '10:30', price: 6000 },
-                        { startTime: '11:00', endTime: '02:30', price: 6000 },
-                        { startTime: '03:00', endTime: '06:30', price: 10000 },
-                        { startTime: '07:00', endTime: '10:00', price: 16000 }];
-                    return timeSlots;
-                } else {
-                    var timeSlots = [
-                        { startTime: '07:00', endTime: '10:30', price: 4500 },
-                        { startTime: '11:00', endTime: '02:30', price: 4500 },
-                        { startTime: '03:00', endTime: '06:30', price: 8000 },
-                        { startTime: '07:00', endTime: '10:00', price: 12000 }
-                    ];
-                    return timeSlots;
-                }
-            }
-        }
-
-        var cartItems = []; // Store booking details in an array
-
-        document.getElementById("booking-form").addEventListener("submit", function (event) {
-            event.preventDefault();
-
-            // Retrieve values from form
-            var selectedItems = document.getElementById("timeslot").selectedOptions;
-            var items = Array.from(selectedItems).map(option => option.value);
-
-            var date = document.getElementById("date").value;
-
-            // Create a new cart item object for each selected item
-            for (var i = 0; i < items.length; i++) {
-                var option_value = items[i].split("|");
-                var newItem = {
-                    start_time: option_value[0],
-                    end_time: option_value[1],
-                    price: option_value[2],
-                    date: date
-                };
-
-                // Add the item to the cart
-                cartItems.push(newItem);
-            }
-
-            updateCartDisplay();
-
-            // Clear the form
-            document.getElementById("booking-form").reset();
-        });
-
-        function updateCartDisplay() {
-            var cartItemsDiv = document.getElementById("cart-items");
-            cartItemsDiv.innerHTML = ""; // Clear previous items
-        
-            if (cartItems.length == 0) {
-                cartItemsDiv.innerHTML = "Cart is empty.";
-            } else {
-                // Display each item in the cart
-                for (var i = 0; i < cartItems.length; i++) {
-                    var cartItem = cartItems[i];
-                    var cartItemDiv = document.createElement("div");
-                    cartItemDiv.innerHTML = `
-                        <div class="cart-item">
-                            <h3>Booking Details<button id=new onclick="removeItem(${i})">Remove</button></h3>
-                            <p>Time : ${cartItem.start_time} to ${cartItem.end_time}</p>
-                            <p>Price: ${cartItem.price}</p>
-                            <p>Date: ${cartItem.date}</p>
-                            <button id=new onclick="submitCartItem(${i})">Submit</button>
-                        </div>
-                    `;
-                    cartItemsDiv.appendChild(cartItemDiv);
-                }
-            }
-        }
-        
-
-        function removeItem(index) {
-            // Remove the item from the cart
-            cartItems.splice(index, 1);
-            updateCartDisplay();
-        }
-
-// Initial cart display
-// updateCartDisplay();
-
-// submit cart item storage
-
-function submitCartItem(index) {
-    var itemToSubmit = cartItems[index];
-    console.log("Submitting the following item to the console:");
-    console.log(itemToSubmit);
-
-    // You can optionally send this data to a server or perform other actions here
-
-    // Optionally mark the item as submitted (you can add a property to the item)
-    itemToSubmit.submitted = true;
-
-    // Update the cart display to reflect the change (e.g., add a submitted flag)
-    updateCartDisplay();
-}
-
-    </script>
     <script src="./script.js"></script>
 
     <script>
