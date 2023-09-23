@@ -94,7 +94,7 @@
         
     <!-- Header End -->
 
-    <form id="booking-form" onsubmit="return bookAction()">
+    <div>
       <h1>Booking Form</h1>
 
       <label for="exampleInputEmail1" style="color: #000000; font-size: x-large;">Select Date:</label>
@@ -113,19 +113,13 @@
       </div>
 
       <p id="priceDisplay">Price: Rs 0</p>
-      <button>Submit</button>
-    </form>
-
-
-
-
+      <button onclick="bookAction()">Submit</button>
+    </div>
     <script>
       let selectedDate = null;
       let selectedTimeSlot = null;
       let selectedPrice = 0;
-      const blockedData = "<%= datesArray %>";
-      const blockedTimeSlots = "<%= timeSlotsArray %>";
-      console.log("from booking detail",blockedData,blockedTimeSlots)
+      const bookingList = JSON.parse('<%- JSON.stringify(bookingList) %>');
       function updateTimeSlots() {
         const date = new Date(document.getElementById('date').value);
         selectedDate = date;
@@ -192,19 +186,15 @@
         const options = timeSelect.options;
         for (let i = 0; i < options.length; i++) {
           const optionValue = options[i].value;
-          console.log("optionvalue and selected date",optionValue,selectedDate)
           const optionDate = selectedDate  // Extract the date part from the option value
           const optionTimeSlot = optionValue  // Extract the time slot part from the option value
-          
-          // Check if the optionDate is in the blockedData array and optionTimeSlot is in the blockedTimeslots array
-          if (blockedData.includes(optionDate) && blockedTimeSlots.includes(optionTimeSlot)) {
-            console.log("from the iffffff condition options, optionValue",options, optionValue,)
-            if(options[i].value==optionValue){
-              console.log("second if block options each value",options[i])
-              options[i].disabled = true;
+          bookingList.map((item)=>{
+            if(item.date==selectedDate && item.timeslot==optionValue){
+              options[i].disabled=true;
               options[i].innerText += " (Blocked)";
             }
-          }
+          })
+          
         }
 
         updatePrice();  // Update the price based on the new time slots
@@ -267,11 +257,11 @@
         const gst = 0.18; // GST rate
         const totalPrice = price + (price * gst); // Add GST
 
-        console.log(selectedDate, selectedTimeSlot, selectedPrice)
         document.getElementById('priceDisplay').innerText = `Price: Rs ${totalPrice}`;
       }
       
       function bookAction() {
+        
         alert("from book action function")
         var email=document.getElementById("email-address").value
         
@@ -281,7 +271,7 @@
           timeSlot: selectedTimeSlot,
           price: selectedPrice
         };
-       
+        
         if (selectedDate == null || selectedTimeSlot == null || selectedPrice == 0) {
           alert("Select the booking details properly");
           return false
@@ -291,7 +281,6 @@
           return false;
         }
         else {
-          alert("from else block")
           fetch("/booking", {
             method: 'POST',
             headers: {
@@ -299,15 +288,18 @@
             },
             body: JSON.stringify(data)
           })
-            .then(response => response.json())
+            .then(response =>{
+              return response.json()
+            })
             .then(data => {
               console.log('Success:', data);
-              
+              if (data.redirectTo) {
+                window.location.href = data.redirectTo; // Redirect on the client side
+              }
               // Handle the response from the server if needed
             })
             .catch((error) => {
               console.error('Error:', error);
-             
               // Handle errors if needed
             });
 
